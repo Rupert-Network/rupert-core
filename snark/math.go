@@ -54,6 +54,11 @@ func (frac *Fraction) simplify() Fraction {
 	return *frac
 }
 
+// FrontendVariables ...
+func (frac *Fraction) FrontendVariables() (frontend.Variable, frontend.Variable) {
+	return frac.numerator, frac.denominator
+}
+
 // Floor ...
 func Floor(api frontend.API, v frontend.Variable) frontend.Variable {
 
