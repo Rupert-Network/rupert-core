@@ -4,13 +4,14 @@ import (
 	"math"
 	"math/big"
 
+	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"github.com/consensys/gnark/frontend"
 )
 
 // Fraction ...
 type Fraction struct {
-	numerator   int64
-	denominator int64
+	numerator   fr.Element
+	denominator fr.Element
 }
 
 // FractionFromFloat ...
@@ -29,18 +30,21 @@ func FractionFromFloat(num float64) Fraction {
 		}
 	}
 
-	numerator := prec*wholeNum + int(fracDecimal)
+	numerator := int64(prec*wholeNum + int(fracDecimal))
 	denominator := int64(math.Pow(10, float64(prec)))
 
-	unsimplified := Fraction{int64(numerator), denominator}
+	unsimplified := Fraction{
+		*new(fr.Element).SetInt64(numerator),
+		*new(fr.Element).SetInt64(denominator),
+	}
 
 	return unsimplified.simplify()
 
 }
 
 func (frac *Fraction) simplify() Fraction {
-	a := new(big.Int).SetInt64(frac.numerator)
-	b := new(big.Int).SetInt64(frac.denominator)
+	a := frac.numerator.ToBigIntRegular(new(big.Int))
+	b := frac.denominator.ToBigIntRegular(new(big.Int))
 
 	gcd := new(big.Int).GCD(nil, nil, a, b)
 
@@ -48,7 +52,7 @@ func (frac *Fraction) simplify() Fraction {
 		newNumerator := new(big.Int).Div(a, gcd)
 		newDenominator := new(big.Int).Div(b, gcd)
 
-		return Fraction{newNumerator.Int64(), newDenominator.Int64()}
+		return Fraction{*frac.numerator.SetBigInt(newNumerator), *frac.denominator.SetBigInt(newDenominator)}
 	}
 
 	return *frac
