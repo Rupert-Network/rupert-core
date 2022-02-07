@@ -38,11 +38,12 @@ func FractionFromFloat(num float64) Fraction {
 		*new(fr.Element).SetInt64(denominator),
 	}
 
-	return unsimplified.simplify()
+	return unsimplified.Simplify()
 
 }
 
-func (frac *Fraction) simplify() Fraction {
+// Simplify ...
+func (frac *Fraction) Simplify() Fraction {
 	a := frac.numerator.ToBigIntRegular(new(big.Int))
 	b := frac.denominator.ToBigIntRegular(new(big.Int))
 
@@ -58,11 +59,6 @@ func (frac *Fraction) simplify() Fraction {
 	return *frac
 }
 
-// FrontendVariables ...
-func (frac *Fraction) FrontendVariables() (frontend.Variable, frontend.Variable) {
-	return frac.numerator, frac.denominator
-}
-
 // Floor ...
 func Floor(api frontend.API, v frontend.Variable) frontend.Variable {
 
@@ -74,4 +70,40 @@ func Modulus(v frontend.Variable, v2 frontend.Variable) frontend.Variable {
 	// TODO: implemet
 	// FIXME: needs floor implemented
 	return 0
+}
+
+// LCM ...
+func LCM(a, b big.Int) big.Int {
+	aTimesB := new(big.Int).Mul(&a, &b)
+	aBGCD := new(big.Int).GCD(nil, nil, &a, &b)
+
+	return *new(big.Int).Div(aTimesB, aBGCD)
+}
+
+// Add ...
+func (frac *Fraction) Add(x, y *Fraction) *Fraction {
+	if !x.numerator.Equal(&y.numerator) {
+		newDenom := LCM(
+			*x.denominator.ToBigIntRegular(new(big.Int)),
+			*y.denominator.ToBigIntRegular(new(big.Int)),
+		)
+
+		multX := new(fr.Element).Div(new(fr.Element).SetBigInt(&newDenom), &x.denominator)
+		multY := new(fr.Element).Div(new(fr.Element).SetBigInt(&newDenom), &y.denominator)
+
+		newXNum := new(fr.Element).Mul(multX, &x.numerator)
+		newYNum := new(fr.Element).Mul(multY, &y.numerator)
+
+		frac.numerator = *new(fr.Element).Add(newXNum, newYNum)
+		frac.denominator = *new(fr.Element).SetBigInt(&newDenom)
+
+	} else {
+
+		newNumerator := new(fr.Element).Add(&x.numerator, &y.numerator)
+
+		frac.numerator = *newNumerator
+		frac.denominator = x.denominator
+
+	}
+	return frac
 }
