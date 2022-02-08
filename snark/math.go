@@ -110,8 +110,8 @@ func (frac *Fraction) Floor(x *Fraction) *Fraction {
 	)
 
 	frac.numerator = *new(fr.Element).Sub(
-		new(fr.Element).SetBigInt(m),
 		&x.numerator,
+		new(fr.Element).SetBigInt(m),
 	)
 	frac.denominator = x.denominator
 

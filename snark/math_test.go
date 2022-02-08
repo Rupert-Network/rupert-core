@@ -56,4 +56,17 @@ func TestFloor(t *testing.T) {
 			frac.numerator.ToBigIntRegular(new(big.Int)),
 		)
 	}
+
+	frac = Fraction{
+		*new(fr.Element).SetInt64(11),
+		*new(fr.Element).SetInt64(10),
+	}
+
+	flooredFrac = new(Fraction).Floor(&frac)
+
+	if flooredFrac.numerator.Cmp(new(fr.Element).SetInt64(10)) != 0 {
+		t.Fatalf("numerator was not 10 got %d",
+			frac.numerator.ToBigIntRegular(new(big.Int)),
+		)
+	}
 }
