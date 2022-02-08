@@ -153,7 +153,34 @@ func (frac *Fraction) Cmp(y *Fraction) int {
 		newYNum := new(fr.Element).Mul(multY, &y.numerator)
 
 		return newXNum.Cmp(newYNum)
-	} else {
-		return frac.numerator.Cmp(&y.numerator)
 	}
+	return frac.numerator.Cmp(&y.numerator)
+}
+
+// Sub ...
+func (frac *Fraction) Sub(x, y *Fraction) *Fraction {
+	if !x.numerator.Equal(&y.numerator) {
+		newDenom := LCM(
+			*x.denominator.ToBigIntRegular(new(big.Int)),
+			*y.denominator.ToBigIntRegular(new(big.Int)),
+		)
+
+		multX := new(fr.Element).Div(new(fr.Element).SetBigInt(&newDenom), &x.denominator)
+		multY := new(fr.Element).Div(new(fr.Element).SetBigInt(&newDenom), &y.denominator)
+
+		newXNum := new(fr.Element).Mul(multX, &x.numerator)
+		newYNum := new(fr.Element).Mul(multY, &y.numerator)
+
+		frac.numerator = *new(fr.Element).Sub(newXNum, newYNum)
+		frac.denominator = *new(fr.Element).SetBigInt(&newDenom)
+
+	} else {
+
+		newNumerator := new(fr.Element).Sub(&x.numerator, &y.numerator)
+
+		frac.numerator = *newNumerator
+		frac.denominator = x.denominator
+
+	}
+	return frac
 }

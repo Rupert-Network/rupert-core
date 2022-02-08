@@ -144,3 +144,30 @@ func TestCmp(t *testing.T) {
 		)
 	}
 }
+
+func TestSub(t *testing.T) {
+	frac := Fraction{
+		*new(fr.Element).SetInt64(3),
+		*new(fr.Element).SetInt64(4),
+	}
+	frac2 := Fraction{
+		*new(fr.Element).SetInt64(1),
+		*new(fr.Element).SetInt64(2),
+	}
+
+	expectedResut := Fraction{
+		*new(fr.Element).SetInt64(1),
+		*new(fr.Element).SetInt64(4),
+	}
+
+	subResult := new(Fraction).Sub(&frac, &frac2)
+
+	if *new(Fraction).Sub(&frac, &frac2) != expectedResut {
+		t.Fatalf("expected Fraction %d/%d got Fraction %d/%d",
+			expectedResut.numerator.ToBigIntRegular(new(big.Int)),
+			expectedResut.denominator.ToBigIntRegular(new(big.Int)),
+			subResult.numerator.ToBigIntRegular(new(big.Int)),
+			subResult.denominator.ToBigIntRegular(new(big.Int)),
+		)
+	}
+}
