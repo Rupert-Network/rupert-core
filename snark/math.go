@@ -13,6 +13,16 @@ type Fraction struct {
 	denominator fr.Element
 }
 
+// NewFraction ...
+func NewFraction(numerator, denominator int64) *Fraction {
+	return new(Fraction).SetParts(numerator, denominator)
+}
+
+// String ...
+func (frac *Fraction) String() string {
+	return "Fraction: " + frac.numerator.String() + "/" + frac.denominator.String()
+}
+
 // FractionFromFloat ...
 func FractionFromFloat(num float64) Fraction {
 	wholeNum := int(num)
@@ -41,8 +51,24 @@ func FractionFromFloat(num float64) Fraction {
 
 }
 
+// SetParts ...
+func (frac *Fraction) SetParts(num int64, denom int64) *Fraction {
+	frac.numerator.SetInt64(num)
+	frac.denominator.SetInt64(denom)
+
+	return frac
+}
+
+// SetBigInt ...
+func (frac *Fraction) SetBigInt(x big.Int) *Fraction {
+	frac.numerator.SetBigInt(&x)
+	frac.denominator.SetInt64(1)
+
+	return frac
+}
+
 // Simplify ...
-func (frac *Fraction) Simplify() Fraction {
+func (frac *Fraction) Simplify() *Fraction {
 	a := frac.numerator.ToBigIntRegular(new(big.Int))
 	b := frac.denominator.ToBigIntRegular(new(big.Int))
 
@@ -55,7 +81,7 @@ func (frac *Fraction) Simplify() Fraction {
 		return Fraction{*frac.numerator.SetBigInt(newNumerator), *frac.denominator.SetBigInt(newDenominator)}
 	}
 
-	return *frac
+	return frac
 }
 
 // LCM ...
