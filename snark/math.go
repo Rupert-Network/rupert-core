@@ -184,3 +184,13 @@ func (frac *Fraction) Sub(x, y *Fraction) *Fraction {
 	}
 	return frac
 }
+
+// Mod ...
+func (frac *Fraction) Mod(x, y *Fraction) *Fraction {
+	divResult := new(Fraction).Div(x, y)
+
+	return new(Fraction).Mul(
+		new(Fraction).Floor(divResult),
+		y,
+	)
+}

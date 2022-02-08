@@ -171,3 +171,30 @@ func TestSub(t *testing.T) {
 		)
 	}
 }
+
+func TestMod(t *testing.T) {
+	frac := Fraction{
+		*new(fr.Element).SetInt64(5),
+		*new(fr.Element).SetInt64(1),
+	}
+	frac2 := Fraction{
+		*new(fr.Element).SetInt64(2),
+		*new(fr.Element).SetInt64(1),
+	}
+
+	expectedResut := Fraction{
+		*new(fr.Element).SetInt64(1),
+		*new(fr.Element).SetInt64(1),
+	}
+
+	modResult := *new(Fraction).Mod(&frac, &frac2)
+
+	if modResult.Simplify() != expectedResut {
+		t.Fatalf("expected Fraction %d/%d got Fraction %d/%d",
+			expectedResut.numerator.ToBigIntRegular(new(big.Int)),
+			expectedResut.denominator.ToBigIntRegular(new(big.Int)),
+			modResult.numerator.ToBigIntRegular(new(big.Int)),
+			modResult.denominator.ToBigIntRegular(new(big.Int)),
+		)
+	}
+}
