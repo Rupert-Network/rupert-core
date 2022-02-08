@@ -95,7 +95,6 @@ func TestMul(t *testing.T) {
 }
 
 func TestDiv(t *testing.T) {
-
 	frac := Fraction{
 		*new(fr.Element).SetInt64(3),
 		*new(fr.Element).SetInt64(4),
@@ -116,6 +115,32 @@ func TestDiv(t *testing.T) {
 		t.Fatalf("denominator was not 9 got %d/%d",
 			divFrac.numerator.ToBigIntRegular(new(big.Int)),
 			divFrac.denominator.ToBigIntRegular(new(big.Int)),
+		)
+	}
+}
+
+func TestCmp(t *testing.T) {
+	frac := Fraction{
+		*new(fr.Element).SetInt64(3),
+		*new(fr.Element).SetInt64(4),
+	}
+	frac2 := Fraction{
+		*new(fr.Element).SetInt64(1),
+		*new(fr.Element).SetInt64(2),
+	}
+	if frac.Cmp(&frac2) != 1 {
+		t.Fatalf("comparison was not 1 got %d",
+			frac.Cmp(&frac2),
+		)
+	}
+	if frac2.Cmp(&frac) != -1 {
+		t.Fatalf("comparison was not -1 got %d",
+			frac2.Cmp(&frac),
+		)
+	}
+	if frac.Cmp(&frac) != 0 {
+		t.Fatalf("comparison was not 0 got %d",
+			frac.Cmp(&frac),
 		)
 	}
 }

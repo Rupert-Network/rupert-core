@@ -1,7 +1,6 @@
 package snark
 
 import (
-	"fmt"
 	"math"
 	"math/big"
 
@@ -133,14 +132,28 @@ func (frac *Fraction) Div(x, y *Fraction) *Fraction {
 	y.numerator = y.denominator
 	y.denominator = yNum
 
-	fmt.Errorf("Oof: %d %d %d\n",
-		yNum.ToBigIntRegular(new(big.Int)),
-		y.numerator.ToBigIntRegular(new(big.Int)),
-		y.denominator.ToBigIntRegular(new(big.Int)),
-	)
-
 	frac.numerator = *new(fr.Element).Mul(&y.numerator, &x.numerator)
 	frac.denominator = *new(fr.Element).Mul(&y.denominator, &x.denominator)
 
 	return frac
+}
+
+// Cmp ...
+func (frac *Fraction) Cmp(y *Fraction) int {
+	if !frac.numerator.Equal(&y.numerator) {
+		newDenom := LCM(
+			*frac.denominator.ToBigIntRegular(new(big.Int)),
+			*y.denominator.ToBigIntRegular(new(big.Int)),
+		)
+
+		multX := new(fr.Element).Div(new(fr.Element).SetBigInt(&newDenom), &frac.denominator)
+		multY := new(fr.Element).Div(new(fr.Element).SetBigInt(&newDenom), &y.denominator)
+
+		newXNum := new(fr.Element).Mul(multX, &frac.numerator)
+		newYNum := new(fr.Element).Mul(multY, &y.numerator)
+
+		return newXNum.Cmp(newYNum)
+	} else {
+		return frac.numerator.Cmp(&y.numerator)
+	}
 }
