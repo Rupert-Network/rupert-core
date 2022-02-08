@@ -25,7 +25,10 @@ func TestLCM(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	frac := Fraction{*new(fr.Element).SetInt64(1), *new(fr.Element).SetInt64(10)}
+	frac := Fraction{
+		*new(fr.Element).SetInt64(1),
+		*new(fr.Element).SetInt64(10),
+	}
 	frac2 := Fraction{*new(fr.Element).SetInt64(2), *new(fr.Element).SetInt64(3)}
 
 	frac3 := new(Fraction).Add(&frac, &frac2)
@@ -36,6 +39,21 @@ func TestAdd(t *testing.T) {
 		t.Fatalf("frac was not 23/30 got %d/%d",
 			frac3.numerator.ToBigIntRegular(new(big.Int)),
 			frac3.denominator.ToBigIntRegular(new(big.Int)),
+		)
+	}
+}
+
+func TestFloor(t *testing.T) {
+	frac := Fraction{
+		*new(fr.Element).SetInt64(1),
+		*new(fr.Element).SetInt64(10),
+	}
+
+	flooredFrac := new(Fraction).Floor(&frac)
+
+	if flooredFrac.numerator.Cmp(new(fr.Element).SetInt64(0)) != 0 {
+		t.Fatalf("numerator was not 0 got %d",
+			frac.numerator.ToBigIntRegular(new(big.Int)),
 		)
 	}
 }

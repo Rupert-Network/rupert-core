@@ -5,7 +5,6 @@ import (
 	"math/big"
 
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
-	"github.com/consensys/gnark/frontend"
 )
 
 // Fraction ...
@@ -59,19 +58,6 @@ func (frac *Fraction) Simplify() Fraction {
 	return *frac
 }
 
-// Floor ...
-func Floor(api frontend.API, v frontend.Variable) frontend.Variable {
-
-	return nil
-}
-
-// Modulus ...
-func Modulus(v frontend.Variable, v2 frontend.Variable) frontend.Variable {
-	// TODO: implemet
-	// FIXME: needs floor implemented
-	return 0
-}
-
 // LCM ...
 func LCM(a, b big.Int) big.Int {
 	aTimesB := new(big.Int).Mul(&a, &b)
@@ -105,5 +91,29 @@ func (frac *Fraction) Add(x, y *Fraction) *Fraction {
 		frac.denominator = x.denominator
 
 	}
+	return frac
+}
+
+// Floor ...
+func (frac *Fraction) Floor(x *Fraction) *Fraction {
+	if x.numerator.Cmp(&x.denominator) == -1 {
+		frac.numerator = *new(fr.Element).SetInt64(0)
+		frac.denominator = x.denominator
+
+		return frac
+	}
+
+	_, m := new(big.Int).DivMod(
+		x.numerator.ToBigIntRegular(new(big.Int)),
+		x.denominator.ToBigIntRegular(new(big.Int)),
+		new(big.Int),
+	)
+
+	frac.numerator = *new(fr.Element).Sub(
+		new(fr.Element).SetBigInt(m),
+		&x.numerator,
+	)
+	frac.denominator = x.denominator
+
 	return frac
 }
