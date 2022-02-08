@@ -70,3 +70,52 @@ func TestFloor(t *testing.T) {
 		)
 	}
 }
+
+func TestMul(t *testing.T) {
+	frac := Fraction{
+		*new(fr.Element).SetInt64(3),
+		*new(fr.Element).SetInt64(4),
+	}
+	frac2 := Fraction{
+		*new(fr.Element).SetInt64(4),
+		*new(fr.Element).SetInt64(3),
+	}
+	mulFrac := new(Fraction).Mul(&frac, &frac2)
+
+	if mulFrac.numerator.Cmp(new(fr.Element).SetInt64(12)) != 0 {
+		t.Fatalf("numerator was not 12 got %d",
+			mulFrac.numerator.ToBigIntRegular(new(big.Int)),
+		)
+	}
+	if mulFrac.denominator.Cmp(new(fr.Element).SetInt64(12)) != 0 {
+		t.Fatalf("numerator was not 12 got %d",
+			mulFrac.numerator.ToBigIntRegular(new(big.Int)),
+		)
+	}
+}
+
+func TestDiv(t *testing.T) {
+
+	frac := Fraction{
+		*new(fr.Element).SetInt64(3),
+		*new(fr.Element).SetInt64(4),
+	}
+	frac2 := Fraction{
+		*new(fr.Element).SetInt64(1),
+		*new(fr.Element).SetInt64(2),
+	}
+	divFrac := new(Fraction).Div(&frac, &frac2)
+
+	if divFrac.numerator.Cmp(new(fr.Element).SetInt64(6)) != 0 {
+		t.Fatalf("numerator was not 6 got %d/%d",
+			divFrac.numerator.ToBigIntRegular(new(big.Int)),
+			divFrac.denominator.ToBigIntRegular(new(big.Int)),
+		)
+	}
+	if divFrac.denominator.Cmp(new(fr.Element).SetInt64(4)) != 0 {
+		t.Fatalf("denominator was not 9 got %d/%d",
+			divFrac.numerator.ToBigIntRegular(new(big.Int)),
+			divFrac.denominator.ToBigIntRegular(new(big.Int)),
+		)
+	}
+}

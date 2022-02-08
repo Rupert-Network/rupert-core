@@ -1,6 +1,7 @@
 package snark
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 
@@ -114,6 +115,32 @@ func (frac *Fraction) Floor(x *Fraction) *Fraction {
 		new(fr.Element).SetBigInt(m),
 	)
 	frac.denominator = x.denominator
+
+	return frac
+}
+
+// Mul ...
+func (frac *Fraction) Mul(x, y *Fraction) *Fraction {
+	frac.numerator = *new(fr.Element).Mul(&y.numerator, &x.numerator)
+	frac.denominator = *new(fr.Element).Mul(&y.denominator, &x.denominator)
+
+	return frac
+}
+
+// Div ...
+func (frac *Fraction) Div(x, y *Fraction) *Fraction {
+	yNum := y.numerator
+	y.numerator = y.denominator
+	y.denominator = yNum
+
+	fmt.Errorf("Oof: %d %d %d\n",
+		yNum.ToBigIntRegular(new(big.Int)),
+		y.numerator.ToBigIntRegular(new(big.Int)),
+		y.denominator.ToBigIntRegular(new(big.Int)),
+	)
+
+	frac.numerator = *new(fr.Element).Mul(&y.numerator, &x.numerator)
+	frac.denominator = *new(fr.Element).Mul(&y.denominator, &x.denominator)
 
 	return frac
 }
